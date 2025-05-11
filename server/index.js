@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./utils/connectDB.js";
 import session from "express-session";
 import passport from "passport";
+import MongoStore from "connect-mongo"
 import crypto from "crypto";
 import { Strategy as LocalStrategy } from "passport-local";
 import ProductRouter from "./routes/Product.Routes.js";
@@ -46,10 +47,19 @@ const opts = {
 };
 
 app.use(
-  session({
+   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      ttl: 14 * 24 * 60 * 60, // session expiration in seconds (14 days)
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // ensures cookies only over HTTPS
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 app.use(passport.initialize());

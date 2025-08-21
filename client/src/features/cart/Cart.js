@@ -33,7 +33,7 @@ export default function Cart() {
     dispatch(deleteItemFromCartAsync(id));
     toast.error("Product removed from cart");
   };
-
+  
   useEffect(() => {
     dispatch(resetStockError());
   }, [dispatch]);
